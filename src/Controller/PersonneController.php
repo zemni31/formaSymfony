@@ -12,6 +12,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 #[Route('/personne')]
 final class PersonneController extends AbstractController
 {
@@ -57,25 +60,43 @@ final class PersonneController extends AbstractController
     }
 
     #[Route('/edit/{id<\d+>?0}', name: 'personne.edit')]
-    public function editPersonne(ManagerRegistry $doctrine, Request $request, Personne $personne = null): Response
+    public function editPersonne(ManagerRegistry $doctrine, 
+    Request $request, 
+    Personne $personne = null, 
+    SluggerInterface $slugger,
+     #[Autowire('%kernel.project_dir%/public/uploads/images')] string $ImagesDirectory): Response
     {
-        $new = false;
-       if(!$personne){
-        $new = true;
-        $personne = new Personne();}
+         $new = false;
+        if (!$personne) {
+            $new = true;
+            $personne = new Personne();
+        }
 
-        $form= $this->createForm(PersonneType::class, $personne);
+        $form = $this->createForm(PersonneType::class, $personne);
         $form->handleRequest(($request));
-        if ($form->isSubmitted()){
+        if ($form->isSubmitted() && $form->isValid()) {
+            $photo = $form->get('photo')->getData();
+
+            if ($photo) {
+                $originalFilename = pathinfo($photo->getClientOriginalName(), PATHINFO_FILENAME);
+                
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$photo->guessExtension();
+
+                
+                try {
+                    $photo->move($ImagesDirectory, $newFilename);
+                } catch (FileException $e) {
+                    
+                }
+
+                
+                $personne->setImage($newFilename);
+            }
         $manager=$doctrine->getManager();
         $manager->persist($personne);
         $manager->flush();
-        if($new){
-            $message=" a été ajoutée avec succès";
-        }
-        else{
-            $message=" a été éditée avec succès";
-        }
+         $message = $new ? " a été ajoutée avec succès" : " a été éditée avec succès";
         $this->addFlash('success', $personne->getName() . $message);
         return $this->redirectToRoute('personne.list.alls');
         }

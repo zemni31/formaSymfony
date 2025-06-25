@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\PersonneRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PersonneRepository::class)]
 class Personne
@@ -13,18 +14,28 @@ class Personne
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
-
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank(message: 'Firstname cannot be blank')]
     private ?string $firstname = null;
+    
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank(message: 'Name cannot be blank')]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::SMALLINT)]
+    #[Assert\Range(
+        min: 1,
+        max: 120,
+        notInRangeMessage: 'Age must be between {{ min }} and {{ max }}',
+    )]
     private ?int $age = null;
 
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $job = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $image = null;
 
     public function getId(): ?int
     {
@@ -75,6 +86,18 @@ class Personne
     public function setJob(?string $job): static
     {
         $this->job = $job;
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): static
+    {
+        $this->image = $image;
 
         return $this;
     }
