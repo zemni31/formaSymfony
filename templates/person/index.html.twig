@@ -1,12 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-<p> Aujourd'hui on est le {{"now" | date("d/m/y")}}</p>
-    <h1> Hello {{app.session.get('section')}}:  {{name | capitalize}} </h1> 
-</body>
-</html>
+{% extends 'template.html.twig' %}
+
+{% block titre %} {{prenom}}  {{nom}}{% endblock %}
+
+{% block title %} Welcome{% endblock %}
+
+
+
+{% block body %}
+    <h4> Welcome a big love from {{prenom |capitalize}}  {{nom | capitalize}} <3 </h4> 
+  mon lien absolu est : {{url('app_person')}} 
+{% endblock %}

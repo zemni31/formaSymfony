@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="{{asset('node_modules/bootstrap/dist/css/bootstrap.min.css')}}">
-</head>
-<body>
+{% extends 'template.html.twig' %}
+{% block body %}
+    
     <table class="table">
         {%for note in notes%}
        <tr>
@@ -19,5 +13,7 @@
       <p> la note minimale est :{{min(notes)}} </p>
         <p> la note maximale est :{{max(notes)}} </p>
     </div>
-</body>
-</html>
+{% endblock %}
+{% block title %}
+notes 
+{% endblock %}
