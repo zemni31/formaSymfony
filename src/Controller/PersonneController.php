@@ -49,15 +49,7 @@ final class PersonneController extends AbstractController
       }
 
 
-    #[Route('/{id<\d+>}',name:'personne.detail')]
-    public function detail(Personne $personne = null):Response{
-
-        if(!$personne){
-          $this->addFlash('error',"Personne  non trouvé");
-          return $this->redirectToRoute('personne.list.alls');
-        }
-        return $this->render('personne/detail.html.twig',['personne'=>$personne]);
-    }
+    
 
     #[Route('/edit/{id<\d+>?0}', name: 'personne.edit')]
     public function editPersonne(ManagerRegistry $doctrine, 
@@ -133,5 +125,14 @@ public function deletePersonne(Personne $personne=null ,ManagerRegistry $doctrin
         $this->addFlash('error','Personne non trouvée');
     }
         return $this->redirectToRoute('personne.list.alls');
+    }
+    #[Route('/{id<\d+>}',name:'personne.detail')]
+    public function detail(Personne $personne = null):Response{
+
+        if(!$personne){
+          $this->addFlash('error',"Personne  non trouvé");
+          return $this->redirectToRoute('personne.list.alls');
+        }
+        return $this->render('personne/detail.html.twig',['personne'=>$personne]);
     }
 }

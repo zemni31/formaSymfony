@@ -10,9 +10,12 @@
             <h5 class="card-title">{{ p.name}}</h5>
             <h6 class="card-subtitle mb-2 text-body-secondary">{{ p.firstname }} {{ p.name }}</h6>
             <p class="card-text">{{ p.age }}</p>
-            <a href="{{ path('personne.detail',{id:p.id}) }}" class="card-link">details</a>
-            <a href="{{ path('personne.delete',{id:p.id}) }}" class="card-link">delete</a>
-            <a href="{{ path('personne.edit',{id:p.id}) }}" class="card-link">Editer</a>
+            <a href="{{ path('personne.detail',{id:p.id}) }}" class="card-link">
+           <i class="fa-solid fa-circle-info"></i>  </a>
+            <a href="{{ path('personne.delete',{id:p.id}) }}" class="card-link">
+            <i class="fa-solid fa-user-xmark"></i>   </a>
+            <a href="{{ path('personne.edit',{id:p.id}) }}" class="card-link">
+            <i class="fa-solid fa-user-pen"></i>  </a>
 
         </div>
     </div>

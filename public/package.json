@@ -10,6 +10,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@fortawesome/angular-fontawesome": "^2.0.1",
     "bootstrap": "^5.3.5"
   }
 }
