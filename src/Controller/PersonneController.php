@@ -15,6 +15,8 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use App\Service\MailerService;
+
 #[Route('/personne')]
 final class PersonneController extends AbstractController
 {
@@ -56,12 +58,15 @@ final class PersonneController extends AbstractController
     Request $request, 
     Personne $personne = null, 
     SluggerInterface $slugger,
-     #[Autowire('%kernel.project_dir%/public/uploads/images')] string $ImagesDirectory): Response
+     #[Autowire('%kernel.project_dir%/public/uploads/images')] string $ImagesDirectory,
+    MailerService $mailer): Response
     {
          $new = false;
         if (!$personne) {
             $new = true;
             $personne = new Personne();
+            
+
         }
 
         $form = $this->createForm(PersonneType::class, $personne);
@@ -88,8 +93,35 @@ final class PersonneController extends AbstractController
         $manager=$doctrine->getManager();
         $manager->persist($personne);
         $manager->flush();
-         $message = $new ? " a été ajoutée avec succès" : " a été éditée avec succès";
+        if($new){
+         $message =  " a été ajoutée avec succès";
+         $mailmessage = "
+<html>
+  <body>
+    <h3>✔️ Ajout confirmée</h3>
+    <p>Les informations de la personne <strong>" . $personne->getFirstname() . " " . $personne->getname() . "</strong> ont été ajoutée avec succès.</p>
+    <p>Merci.</p>
+  </body>
+</html>";
+$subject="Création de cpmpte - Confirmation";
+
+        } else {         
+            $message= " a été éditée avec succès";
+                     $mailmessage= "
+<html>
+  <body>
+    <h3>✔️ Modification confirmée</h3>
+    <p>Les informations de la personne <strong>" . $personne->getFirstname() . " " . $personne->getname() . "</strong> ont été modifiées avec succès.</p>
+    <p>Merci.</p>
+  </body>
+</html>";
+$subject="Modification des informations - Confirmation";
+        }
         $this->addFlash('success', $personne->getName() . $message);
+        
+        
+$mailer->sendEmail('mahdizamni83@gmail.com', $mailmessage,$subject);
+
         return $this->redirectToRoute('personne.list.alls');
         }
         else{
